@@ -16,7 +16,9 @@ namespace SK_Observability.Settings
 
         public static string Endpoint => Configuration["AzureOpenAI:Endpoint"];
         public static string ApiKey => Configuration["AzureOpenAI:ApiKey"];
-        public static string DeploymentName => Configuration["AzureOpenAI:DeploymentName"];
-        public static string ModelName => Configuration["AzureOpenAI:ModelName"];
+        public static string Deployment_GPT4o => Configuration["AzureOpenAI:DeploymentName-GPT4o"];
+        public static string Model_GPT4o => Configuration["AzureOpenAI:ModelName-GPT4o"];
+        public static string Deployment_GPT35Turbo => Configuration["AzureOpenAI:DeploymentName-GPT35Turbo"];
+        public static string Model_GPT35Turbo => Configuration["AzureOpenAI:ModelName-GPT35Turbo"];
     }
 }

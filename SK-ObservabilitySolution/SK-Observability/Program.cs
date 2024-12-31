@@ -34,11 +34,11 @@ namespace SK_Observability
                 .AddConsoleExporter()
                 .Build();
 
-            using var meterProvider = Sdk.CreateMeterProviderBuilder()
-                .SetResourceBuilder(resourceBuilder)
-                .AddMeter("Microsoft.SemanticKernel*")
-                .AddConsoleExporter()
-                .Build();
+            //using var meterProvider = Sdk.CreateMeterProviderBuilder()
+            //    .SetResourceBuilder(resourceBuilder)
+            //    .AddMeter("Microsoft.SemanticKernel*")
+            //    .AddConsoleExporter()
+            //    .Build();
 
             using var loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -55,13 +55,17 @@ namespace SK_Observability
             });
 
             var builder = Kernel.CreateBuilder();
+            
+
             builder.AddAzureOpenAIChatCompletion(
-                AzureOpenAiSettings.DeploymentName,
+                AzureOpenAiSettings.Deployment_GPT4o,
                 AzureOpenAiSettings.Endpoint,
                 AzureOpenAiSettings.ApiKey,
-                AzureOpenAiSettings.ModelName);
+                AzureOpenAiSettings.Model_GPT4o);
 
             var kernel = builder.Build();
+
+           
             var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
 
             // Add a plugin (the LightsPlugin class is defined below)
@@ -70,7 +74,8 @@ namespace SK_Observability
             // Enable planning
             OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new()
             {
-                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),                 
+                
             };
 
             // Create a history store the conversation
@@ -81,7 +86,8 @@ namespace SK_Observability
             var result = await chatCompletionService.GetChatMessageContentAsync(
                history,
                executionSettings: openAIPromptExecutionSettings,
-               kernel: kernel);
+               kernel: kernel
+               );
 
             // Print the results
             Write("Assistant > " + result);
