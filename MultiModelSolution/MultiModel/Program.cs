@@ -1,5 +1,6 @@
 ﻿#pragma warning disable SKEXP0050
 
+using Azure;
 using Microsoft.SemanticKernel;
 using MultiModel.Settings;
 
@@ -38,32 +39,42 @@ namespace MultiModel
 
                 // Create a Prompt
                 var prompt = "Did Monty Python sing a song about lumberjacks?";
-
-                // Create KernelArguments, one for each model
-                KernelArguments kernelArguments = new()
+                // Create an array of KernelArguments, one for each model
+                var kernelArguments = new KernelArguments[]
                 {
-                    ExecutionSettings = new Dictionary<string, PromptExecutionSettings>
-                {
-                    { AzureOpenAiSettings.ModelNameGPT35Turbo, new() }
-                }
+                    new KernelArguments
+                    {
+                        ExecutionSettings = new Dictionary<string, PromptExecutionSettings>
+                        {
+                            { AzureOpenAiSettings.ModelNameGPT35Turbo, new PromptExecutionSettings() }
+                        }
+                    },
+                    new KernelArguments
+                    {
+                        ExecutionSettings = new Dictionary<string, PromptExecutionSettings>
+                        {
+                            { AzureOpenAiSettings.ModelNameGPT4o, new PromptExecutionSettings() }
+                        }
+                    }                    
                 };
 
-                var response = await kernel.InvokePromptAsync(prompt, kernelArguments);
-                Console.WriteLine($"Response from GPT-3.5-Turbo: {response}");
-
-                kernelArguments = new()
+                // Ask the User which Model they want to use?
+                Console.Write($"{Environment.NewLine}Which model would you like to use? 1. GPT-3.5-Turbo 2. GPT-4o: ");
+                var modelChoice = Console.ReadLine();
+                if (modelChoice == "1")
                 {
-                    ExecutionSettings = new Dictionary<string, PromptExecutionSettings>
-                {
-                    { AzureOpenAiSettings.ModelNameGPT35Turbo, new() }
+                    Console.WriteLine("You have chosen GPT-3.5-Turbo");
+                    var response = await kernel.InvokePromptAsync(prompt, kernelArguments[0]);
+                    Console.WriteLine($"{Environment.NewLine}Response from GPT-3.5-Turbo: {response}");
                 }
-                };
+                else
+                {
+                    Console.WriteLine("You have chosen GPT-4o");
+                    var response = await kernel.InvokePromptAsync(prompt, kernelArguments[1]);
+                    Console.WriteLine($"{Environment.NewLine}Response from GPT-4o: {response}{Environment.NewLine}");
+                }             
 
-                response = await kernel.InvokePromptAsync(prompt, kernelArguments);
-                Console.WriteLine($"Response from GPT-4o: {response}");
-
-
-
+                Console.WriteLine("Press any key to exit.");
                 Console.ReadLine();
 
             }
